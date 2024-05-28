@@ -1,9 +1,5 @@
 <!DOCTYPE HTML>
-<!--
-	Dimension by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
+
 <html>
 	<head>
 		<title>Amaliy matematika va raqamli texnologiyalar</title>
@@ -11,6 +7,45 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script>
+        async function sendMessage(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            const botToken = '7160550898:AAHcdmoHDh4_S-_aVENlRTmPsj-bvzaxswk';
+            const chatId = '1350025588';
+            const telegramMessage = `New message from ${name} (${email}):\n\n${message}`;
+
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+            const data = {
+                chat_id: chatId,
+                text: telegramMessage,
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                alert('Message sent successfully!');
+            } catch (error) {
+                alert(`Failed to send message: ${error.message}`);
+            }
+        }
+    </script>
 	</head>
 	<body class="is-preload">
 
@@ -31,6 +66,8 @@
 						<nav>
 							<ul>
 								<li><a href="#intro">Ma'lumotlar</a></li>
+								<li><a href="#news">Yangiliklar</a></li>
+								<li><a href="#publish">Ilmiy nashlar</a></li>
 								<li><a href="#work">Yutuqlar</a></li>
 								<li><a href="#about">O'qituvchilar</a></li>
 								<li><a href="#contact">Bog'lanish</a></li>
@@ -44,55 +81,142 @@
 
 						<!-- Intro -->
 							<article id="intro">
-								<h2 class="major">Intro</h2>
-								<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
-								<p>Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. By the way, check out my <a href="#work">awesome work</a>.</p>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula.</p>
+								<h2 class="major">Kafedra haqida</h2>
+								<span class="image main"><img src="images/namdu2.jpg" alt="" /></span>
+								<p>Kafedra 1972-yil O'zbekiston Respublikasi Fanlar Akademiyasi akademigi V. Q. Qobulov tashabbusi bilan ochilgan. Kafedra matematika, matematika va informatika yo'nalishlarida dars olib borgan. </p>
+								<p>1992 yil 15 martdan boshlab Namangan davlat pedagogika instituti Namangan davlat universitetiga aylantirildi. 1993 yilning 1 sentyabrida universitet rektori Abdulla Azamovich A’zamov buyrug‘i bilan Algebra, informatika va hisoblash texnikasi kafedrasi bazasida Amaliy matematika va axborot texnologiyalari kafedrasi tashkil qilindi. Shu kafedra qoshida Amaliy matematika va informatika bakalavr yo‘nalishi ham ochildi.</p>
+								<p>Hozirda  kafedra universitet Kengashining 2023-yil 30-avgustdagi qaroriga muvofiq – “Amaliy matematika va raqamli texnologiyalar”  nomi bilan faoliyat olib bormoqda. Kafedrada jami 785 nafar talabalar, bundan 62 nafar magistrlar ta'lim olmoqda. Hozirgi kunda kafedrada asosiy shtatda jami 28 nafar professor-o`qituvchilar faoliyat olib bormoqda. Ulardan  6 ta fan nomzodi va bir qator yosh o‘qituvchilar ishlab kelmoqda.</p>
+							</article>
+
+						<!-- News -->
+							<article id="news">
+								<h2 class="major">Yangiliklar</h2>
+								<div id="news-container"></div>
+								<script>
+									async function fetchNews() {
+										const sheetId = '15wOmzfhRQVj1lucOXvwZNVTcWAX-LSkcD8RrQWJUjUA';
+										const apiKey = 'AIzaSyBvgQUuGVqUKWWSi1Tp2dBhSS08b6DAF2U';
+										const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${apiKey}`;
+
+										try {
+											const response = await fetch(url);
+											const data = await response.json();
+											const newsContainer = document.getElementById('news-container');
+
+											data.values.slice(1).forEach(row => { // Skip the header row
+												const [title, date, body, imageUrl] = row;
+												const newsItem = document.createElement('div');
+												newsItem.className = 'news-item';
+												newsItem.innerHTML = `
+													<h2>${title}</h2>
+													<p>${date}</p>
+													<div>${body}</div>
+													${imageUrl ? `<img src="${imageUrl}" alt="${title}">` : ''}
+												`;
+												newsContainer.appendChild(newsItem);
+											});
+										} catch (error) {
+											console.error('Error fetching news:', error);
+										}
+									}
+
+									document.addEventListener('DOMContentLoaded', fetchNews);
+								</script>
+							</article>
+
+						<!-- Publish -->
+							<article id="publish">
+								<h2 class="major">Ilmiy nashrlar</h2>
+								<div id="publish-container"></div>
+								<script>
+									async function fetchNews() {
+										const sheetId = '1EXUjvo-HqojnBRRzimAy8wgVzo6gD2SOvIMx_erNOyU';
+										const apiKey = 'AIzaSyBvgQUuGVqUKWWSi1Tp2dBhSS08b6DAF2U';
+										const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${apiKey}`;
+
+										try {
+											const response = await fetch(url);
+											const data = await response.json();
+											const newsContainer = document.getElementById('publish-container');
+
+											data.values.slice(1).forEach(row => { // Skip the header row
+												const [muallif, nomi, nashriyot, joyi, nomeri, yili, sahifa] = row;
+												const newsItem = document.createElement('div');
+												newsItem.className = 'news-item';
+												newsItem.innerHTML = `
+													<p>${muallif}: ${nomi}. ${nashriyot}, ${joyi}, ${nomeri}-son, ${yili}. ${sahifa}-bet</p>
+												`;
+												newsContainer.appendChild(newsItem);
+											});
+										} catch (error) {
+											console.error('Error fetching news:', error);
+										}
+									}
+
+									document.addEventListener('DOMContentLoaded', fetchNews);
+								</script>
 							</article>
 
 						<!-- Work -->
 							<article id="work">
-								<h2 class="major">Work</h2>
-								<span class="image main"><img src="images/pic02.jpg" alt="" /></span>
-								<p>Adipiscing magna sed dolor elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices.</p>
-								<p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus amet feugiat tempus.</p>
+								<h2 class="major">Erishilgan yutuqlar</h2>
+								<span class="image main"><img src="images/img_1.png" alt="" /></span>
+								<p>Talabalarimiz 2022 yil 6-7-dekabr kunlari Qozog`istonning Almati shaxrida o`tkazilgan "ICPC" (International Collegiate Programming Contest) – algoritmik dasturlash boʻyicha xalqaro chempionatida faxrli 4-o`rinni egalladi.</p>
 							</article>
 
 						<!-- About -->
 							<article id="about">
-								<h2 class="major">About</h2>
-								<span class="image main"><img src="images/pic03.jpg" alt="" /></span>
-								<p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum dolor sit amet.</p>
+								<h2 class="major">Professor-o'qituvchilar</h2>
+								<span class="image main"><img src="images/musoxon.png" alt="" /></span>
+								<h3>Dadaxanov Musoxon Xoshimxonovich</h3>
+								<p>Amaliy matematika va raqamli texnologiyalar kafedrasi mudiri, texnika fanlari bo`yicha falsafa doktori, dotsent. <br> Qabul vaqti: Har kuni 10:00-12:00</p>
+
+								<span class="image main"><img src="images/otaxanov.jpg" alt="" /></span>
+								<h3>Otaxanov Nurillo Abdumalikovich</h3>
+								<p> Pedagogika fanlari nomzodi, professor. <br> 2009 yil 30 dekabr kuni fizika-matematika fanlari doktori, professor Aripov Mirsaid Mirsidiqovich rahbarligida “Ob’yektga yo‘naltirilgan dasturlash tillarini o‘qitish uslubiyoti (Oliy o‘quv yurtlari misolida)” mavzusida nomzodlik dissertatsiyasini himoya qilgan va 2010 yil 24 iyun kuni O‘zbekiston OAK ning 166/1-sonli qarori bilan unga pedagogika fanlari nomzodi ilmiy darajasi berilgan. <br> Hammasi bo‘lib 50 ga yaqin dan ortiq ilmiy, o‘quv-uslubiy ishlarning (shu jumladan “DELPHI dasturlash tilini o‘qitish bo‘yicha elektron darslik”, shu nomdagi bitta patent, “DELPHI dasturlash tili” (2008 y.),   “Dasturlash asoslari bo‘yicha masalalar to‘plami” (2013 y) , “Dasturlash asoslari” (2015 y) kabi o‘quv qo‘llanma va boshqa bir qator o‘quv-uslubiy qo‘llanmalar) muallifi hisoblanadi. 2007-2010 yillarda Avstriya-O‘zbekiston qo‘shma TEMPUS loyihasida ishtirok etgan.</p>
+
+								<span class="image main"><img src="images/otaxanov.jpg" alt="" /></span>
+								<h3>Otaxanov Nurillo Abdumalikovich</h3>
+								<p> Pedagogika fanlari nomzodi, professor. <br> 2009 yil 30 dekabr kuni fizika-matematika fanlari doktori, professor Aripov Mirsaid Mirsidiqovich rahbarligida “Ob’yektga yo‘naltirilgan dasturlash tillarini o‘qitish uslubiyoti (Oliy o‘quv yurtlari misolida)” mavzusida nomzodlik dissertatsiyasini himoya qilgan va 2010 yil 24 iyun kuni O‘zbekiston OAK ning 166/1-sonli qarori bilan unga pedagogika fanlari nomzodi ilmiy darajasi berilgan. <br> Hammasi bo‘lib 50 ga yaqin dan ortiq ilmiy, o‘quv-uslubiy ishlarning (shu jumladan “DELPHI dasturlash tilini o‘qitish bo‘yicha elektron darslik”, shu nomdagi bitta patent, “DELPHI dasturlash tili” (2008 y.),   “Dasturlash asoslari bo‘yicha masalalar to‘plami” (2013 y) , “Dasturlash asoslari” (2015 y) kabi o‘quv qo‘llanma va boshqa bir qator o‘quv-uslubiy qo‘llanmalar) muallifi hisoblanadi. 2007-2010 yillarda Avstriya-O‘zbekiston qo‘shma TEMPUS loyihasida ishtirok etgan.</p>
+
+								<span class="image main"><img src="images/otaxanov.jpg" alt="" /></span>
+								<h3>Otaxanov Nurillo Abdumalikovich</h3>
+								<p> Pedagogika fanlari nomzodi, professor. <br> 2009 yil 30 dekabr kuni fizika-matematika fanlari doktori, professor Aripov Mirsaid Mirsidiqovich rahbarligida “Ob’yektga yo‘naltirilgan dasturlash tillarini o‘qitish uslubiyoti (Oliy o‘quv yurtlari misolida)” mavzusida nomzodlik dissertatsiyasini himoya qilgan va 2010 yil 24 iyun kuni O‘zbekiston OAK ning 166/1-sonli qarori bilan unga pedagogika fanlari nomzodi ilmiy darajasi berilgan. <br> Hammasi bo‘lib 50 ga yaqin dan ortiq ilmiy, o‘quv-uslubiy ishlarning (shu jumladan “DELPHI dasturlash tilini o‘qitish bo‘yicha elektron darslik”, shu nomdagi bitta patent, “DELPHI dasturlash tili” (2008 y.),   “Dasturlash asoslari bo‘yicha masalalar to‘plami” (2013 y) , “Dasturlash asoslari” (2015 y) kabi o‘quv qo‘llanma va boshqa bir qator o‘quv-uslubiy qo‘llanmalar) muallifi hisoblanadi. 2007-2010 yillarda Avstriya-O‘zbekiston qo‘shma TEMPUS loyihasida ishtirok etgan.</p>
+
+								<span class="image main"><img src="images/otaxanov.jpg" alt="" /></span>
+								<h3>Otaxanov Nurillo Abdumalikovich</h3>
+								<p> Pedagogika fanlari nomzodi, professor. <br> 2009 yil 30 dekabr kuni fizika-matematika fanlari doktori, professor Aripov Mirsaid Mirsidiqovich rahbarligida “Ob’yektga yo‘naltirilgan dasturlash tillarini o‘qitish uslubiyoti (Oliy o‘quv yurtlari misolida)” mavzusida nomzodlik dissertatsiyasini himoya qilgan va 2010 yil 24 iyun kuni O‘zbekiston OAK ning 166/1-sonli qarori bilan unga pedagogika fanlari nomzodi ilmiy darajasi berilgan. <br> Hammasi bo‘lib 50 ga yaqin dan ortiq ilmiy, o‘quv-uslubiy ishlarning (shu jumladan “DELPHI dasturlash tilini o‘qitish bo‘yicha elektron darslik”, shu nomdagi bitta patent, “DELPHI dasturlash tili” (2008 y.),   “Dasturlash asoslari bo‘yicha masalalar to‘plami” (2013 y) , “Dasturlash asoslari” (2015 y) kabi o‘quv qo‘llanma va boshqa bir qator o‘quv-uslubiy qo‘llanmalar) muallifi hisoblanadi. 2007-2010 yillarda Avstriya-O‘zbekiston qo‘shma TEMPUS loyihasida ishtirok etgan.</p>
+
 							</article>
 
 						<!-- Contact -->
 							<article id="contact">
-								<h2 class="major">Contact</h2>
-								<form method="post" action="#">
+								<h2 class="major">Savol yuborish</h2>
+								<form id="contact-form" onsubmit="sendMessage(event)">
 									<div class="fields">
 										<div class="field half">
-											<label for="name">Name</label>
+											<label for="name">Ismingiz</label>
 											<input type="text" name="name" id="name" />
 										</div>
 										<div class="field half">
-											<label for="email">Email</label>
+											<label for="email">Elektron pochtangiz</label>
 											<input type="text" name="email" id="email" />
 										</div>
 										<div class="field">
-											<label for="message">Message</label>
+											<label for="message">Savol matni</label>
 											<textarea name="message" id="message" rows="4"></textarea>
 										</div>
 									</div>
 									<ul class="actions">
-										<li><input type="submit" value="Send Message" class="primary" /></li>
-										<li><input type="reset" value="Reset" /></li>
+										<li><input type="submit" value="Savolni yuborish" class="primary" /></li>
+										<li><input type="reset" value="Tozalash" /></li>
 									</ul>
 								</form>
 								<ul class="icons">
-									<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-									<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+									<li><a href="https://t.me/namdu_matematika_fakulteti" class="icon brands fa-telegram"><span class="label">Twitter</span></a></li>
+									<li><a href="https://facebook.com/namangandavlatuniversiteti" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
 									<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-									<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+									<li><a href="#" class="icon brands fa-twitter"><span class="label">GitHub</span></a></li>
 								</ul>
 							</article>
 
